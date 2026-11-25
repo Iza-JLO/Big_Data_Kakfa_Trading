@@ -1,0 +1,29 @@
+NOTAS - GENERADOR DE VELAS (SPARK)
+
+
+Para ejecutar Spark, utilizar el siguiente comando desde la carpeta principal del repositorio:
+
+```powershell
+docker run --rm -it --name spark-velas --network container:kafka --user 0 -v "${PWD}:/app" -w /app --entrypoint /opt/spark/bin/spark-submit apache/spark:3.5.6-python3 --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.6 /app/trading_plataforma/streaming/generador_velas.py
+```
+
+Consideraciones:
+
+- Mantener Kafka y el productor de ticks ejecutándose.
+- Spark se ejecuta mediante Docker para evitar errores de Hadoop en Windows.
+- Servidor Kafka: localhost:9092.
+- Tópico de entrada: ticks.
+- Tópico de salida: velas.
+- Las velas duran un minuto y tienen un margen de 10 segundos para datos tardíos.
+- Ordenar las velas por el campo inicio antes de calcular las medias móviles.
+- No subir la carpeta checkpoints a GitHub.
+
+Para comprobar las velas:
+
+```powershell
+docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic velas --from-beginning
+```
+
+Estructura de salida:
+
+{symbol, inicio, open, high, low, close, num_ticks}
