@@ -48,8 +48,12 @@ class IBProducer(EWrapper, EClient):
             print(json.dumps(event))
             self.kafka.publish(event)
 
-    def error(self, reqId, errorTime, errorCode, errorString, advancedOrderRejectJson=""):
-       print(f"Error en IB {errorCode}: {errorString}")
+    def error(self, reqId, *args):
+        if len(args) >= 3 and isinstance(args[1], int):
+            errorCode, errorString = args[1], args[2]
+        else:
+            errorCode, errorString = args[0], args[1]
+        print(f"Mensaje de IB {errorCode}: {errorString}")
 
 
 if __name__ == "__main__":
