@@ -4,3 +4,4 @@ checkpoints/
 .venv/
 *.csv
 .env
+trading_plataforma/ejecucion/logs/
